@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * @file
@@ -17,16 +17,16 @@ class jiraApiClient extends Client {
 
   /**
    * Constructor.
-   * 
+   *
    * @param string $username
    *   A Jira username.
    *
    * @param string $password
    *   Jira password
-   * 
+   *
    * @param string $apiUrl
    *   Base url of Jira instance. (eg http://myjirasite.com)
-   * 
+   *
    * @return jiraApiClient
    */
   public function __construct($username, $password, $apiUrl) {
@@ -66,13 +66,13 @@ class jiraApiClient extends Client {
    *
    * @param string $summary
    *  A one sentence summary of the issue
-   * 
+   *
    * @param string $issuetype
    *  Type of task to create
    *
    * @param array $labels
    *  An array containing labels for the ticket. Eg array("maintenance","sql")
-   * 
+   *
    * @param string $description
    *  Description of the work to be done and any links
    *
@@ -81,7 +81,7 @@ class jiraApiClient extends Client {
    */
   public function createIssue($fields = array()) {
 
-    
+
     $request = $this->createRequest('POST','issue');
     $request->setBody(Stream::factory(json_encode($fields)));
 
@@ -101,7 +101,7 @@ class jiraApiClient extends Client {
    *  The response, including results
    */
   public function getProject($projectKey) {
-    $request = $this->createRequest('GET','project' . $projectKey);
+    $request = $this->createRequest('GET','project/' . $projectKey);
 
     $response = $this->send($request);
     $data = $response->json();
@@ -117,13 +117,13 @@ class jiraApiClient extends Client {
    *
    * @param number $offset
    *  The index of the first issue to return
-   * 
+   *
    * @param number $limit
    *  The maximum number of issues to return (default to 50)
    *
    * @param boolean $validateQuery
    *  whether to validate the JQL query (default to true)
-   * 
+   *
    * @param string $field
    *  The list of fields to return for each issue.
    *
@@ -150,6 +150,6 @@ class jiraApiClient extends Client {
 
     return $data;
   }
-  
+
 }
 
