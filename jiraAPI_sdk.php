@@ -91,7 +91,15 @@ class jiraApiClient extends Client {
     return $data;
   }
 
-
+  /**
+   * Gets a Project
+   *
+   * @param string $projectKey
+   *  The project ID or Key
+   *
+   * @return array
+   *  The response, including results
+   */
   public function getProject($projectKey) {
     $request = $this->createRequest('GET','project' . $projectKey);
 
@@ -100,10 +108,48 @@ class jiraApiClient extends Client {
 
     return $data;
   }
- 
+
+  /**
+   * Creates an Issue
+   *
+   * @param string $jql
+   *  The Jira query
+   *
+   * @param number $offset
+   *  The index of the first issue to return
+   * 
+   * @param number $limit
+   *  The maximum number of issues to return (default to 50)
+   *
+   * @param boolean $validateQuery
+   *  whether to validate the JQL query (default to true)
+   * 
+   * @param string $field
+   *  The list of fields to return for each issue.
+   *
+   * @param string $expand
+   *  A comma-separated list of the parameters to expand.
+   *
+   * @return array
+   *  The response, including results
+   */
+  public function search($jql, $offset=0, $limit=50, $validateQuery=true, $fields="", $expand="") {
+    $fields = array(
+      "jql" => $jql,
+      "startAt" => $offset,
+      "maxResults" => $limit,
+      "fields" => array($fields),
+      "expand" => array($expand),
+    );
+
+    $request = $this->createRequest('POST','search');
+    $request->setBody(Stream::factory(json_encode($fields)));
+
+    $response = $this->send($request);
+    $data = $response->json();
+
+    return $data;
+  }
+  
 }
-
-createIssue takes in key value pairs
-convert project name into ids
-
 
