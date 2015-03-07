@@ -61,20 +61,8 @@ class jiraApiClient extends Client {
   /**
    * Creates an Issue
    *
-   * @param string $project
-   *  The Jira key for a project, usually two to three letters
-   *
-   * @param string $summary
-   *  A one sentence summary of the issue
-   *
-   * @param string $issuetype
-   *  Type of task to create
-   *
-   * @param array $labels
-   *  An array containing labels for the ticket. Eg array("maintenance","sql")
-   *
-   * @param string $description
-   *  Description of the work to be done and any links
+   * @param array $fields
+   *  An associative array containing fields to populate new ticket.
    *
    * @return array
    *  The response, including results
@@ -85,6 +73,54 @@ class jiraApiClient extends Client {
     $request = $this->createRequest('POST','issue');
     $request->setBody(Stream::factory(json_encode($fields)));
 
+    $response = $this->send($request);
+    $data = $response->json();
+
+    return $data;
+  }
+
+  /**
+   * Creates multiple issues
+   *
+   * @param array $issues
+   *  An array containing issues to be created.
+   *
+   * @return array
+   *  The response, including results
+   */
+  public function createIssuesBulk($issues = array()) {
+    $request = $this->createRequest('POST','issue/bulk');
+    $request->setBody(Stream::factory(json_encode($issues)));
+
+    $response = $this->send($request);
+    $data = $response->json();
+
+    return $data;
+  }
+
+  /**
+   * Requests an Issue object for a specific project issue type.
+   *
+   * @param string $projectIds
+   *   A comma separated list of project Ids
+   *
+   * @param string $projectKeys
+   *   A comma separated list of project keys
+   *
+   * @param array $issueTypeIds
+   *   An array of issuetypeIds
+   *
+   * @param array $issueTypeNames
+   *   An array of issuetypeNames
+   *
+   * @return array
+   *  The response, including results
+   */
+  public function createMeta($projectIds=NULL, $projectKeys=NULL, $issueTypeIds=NULL, $issuetypeNames=NULL) {
+    $queryString = 'projectIds=' . $projectIds . '&projectKeys=' . $projectKeys . '&issuetypeIds=' . $issuetypeIds . '&issuetypeNames=' . $issuetypeNames;
+    $queryString .= '&expand=projects.issuetypes.fields';
+    
+    $request = $this->createRequest('GET','issue/createmeta?' . $queryString);
     $response = $this->send($request);
     $data = $response->json();
 
